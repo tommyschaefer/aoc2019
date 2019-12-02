@@ -1,20 +1,14 @@
 module Part1 where
 
-import           Data.List
-import           Data.Maybe
+import           Data.List       (find)
+import           Data.List.Split (splitOn)
+import           Data.Maybe      (fromMaybe)
 
 data Instruction
     = Add Int Int Int
     | Multiply Int Int Int
     | Stop
     deriving (Show)
-
-wordsBy :: Char -> String -> [String]
-wordsBy sep str = case dropWhile matchesSep str of
-    "" -> []
-    s  -> w : wordsBy sep s' where (w, s') = break matchesSep s
-  where
-    matchesSep = (== sep)
 
 combinations :: [a] -> [b] -> [(a, b)]
 combinations as bs = [(a, b) | a <- as, b <- bs]
@@ -49,7 +43,7 @@ restore :: Int -> Int -> [Int] -> [Int]
 restore n v (a:_:_:xs) = a:n:v:xs
 
 parseInput :: String -> [Int]
-parseInput = map read . wordsBy ','
+parseInput = map read . splitOn ","
 
 compute :: Int -> Int -> String -> Int
 compute n v = head . calculate 0 . restore n v . parseInput

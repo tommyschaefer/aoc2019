@@ -1,17 +1,12 @@
 module Part1 where
 
+import           Data.List.Split (splitOn)
+
 data Instruction
     = Add Int Int Int
     | Multiply Int Int Int
     | Stop
     deriving (Show)
-
-wordsBy :: Char -> String -> [String]
-wordsBy sep str = case dropWhile matchesSep str of
-    "" -> []
-    s  -> w : wordsBy sep s' where (w, s') = break matchesSep s
-  where
-    matchesSep = (== sep)
 
 updateWith :: Int -> ([a] -> a) -> [a] -> [a]
 updateWith i f vs = head ++ f vs:tail where (head, _:tail) = splitAt i vs
@@ -43,7 +38,7 @@ restore :: Int -> Int -> [Int] -> [Int]
 restore n v (a:_:_:xs) = a:n:v:xs
 
 parseInput :: String -> [Int]
-parseInput = map read . wordsBy ','
+parseInput = map read . splitOn ","
 
 answer :: String -> Int
 answer = head . calculate 0 . restore 12 2 . parseInput
