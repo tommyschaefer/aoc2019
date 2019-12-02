@@ -26,14 +26,26 @@ calculate idx xs = case opcode idx xs of
     (Multiply a b c, list) -> calculate (idx + 4) $ update (*) a b c list
     (Stop, list) -> list
 
-restore :: [Int] -> [Int]
-restore (a:_:_:xs) = (a:12:2:xs)
+restore :: (Int, Int) -> [Int] -> [Int]
+restore (noun,verb) (a:_:_:xs) = (a:noun:verb:xs)
 
 parseInput :: String -> [Int]
 parseInput = map read . wordsBy ','
 
+answerAttempt :: (Int, Int) -> String -> Int
+answerAttempt nv = head . calculate 0 . restore nv . parseInput
+
+combine :: [Int] -> [Int] -> [(Int, Int)]
+combine xs ys = [(x,y) | x<-xs, y<-ys]
+
+findAnswer :: Int -> [(Int, Int)] -> String -> (Int, Int)
+findAnswer v (nv:nvs) s
+    | v /= (answerAttempt nv s) = findAnswer v nvs s
+    | otherwise               = nv
+
 answer :: String -> Int
-answer = head . calculate 0 . restore . parseInput
+answer s =  100 * n + v
+    where (n, v) = findAnswer 19690720 (combine [0..99] [0..99]) s
 
 main :: IO ()
 main = interact $ show . answer
